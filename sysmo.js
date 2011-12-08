@@ -157,9 +157,13 @@
       //config can also be classes instead of an array if not required and no default value.
       
       var configs = Sysmo.makeArray(arguments),
+          //original arguments that we need to verify
           values = Sysmo.makeArray(configs.shift()),
+          //the function that will receive the verified arguments
           callback = configs.pop(),
+          //the verified argumetns to pass to the callback
           args = [],
+          //send the verified arguments to the callback
           done = function() {
             //add the proper number of arguments before adding remaining values
             if (!args.length) {
