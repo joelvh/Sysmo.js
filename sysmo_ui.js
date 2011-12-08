@@ -6,9 +6,8 @@
     display_message = true,
     loading_messages = [],
     loaded_timer,
-    loading_default_timeout = 250,
+    default_timeout = 250,
     loading_message = function(message, timeout, callback) {
-      timeout = (timeout==null) ? loading_default_timeout : timeout;
       clearTimeout(loaded_timer);
       //if (message) {
         if (display_message) {
@@ -41,24 +40,28 @@
         $.unblockUI({ onUnblock: callback });
         //$("#loading_message").fadeOut('fast');
         is_loading = false;
-      }, (timeout==null) ? loading_default_timeout : timeout)
+      }, timeout);
     },
     loading = function (message, timeout) {
-      
-      if (!is_loading) {
-        $.blockUI();
-        loading_resizer();
-        $(window).resize(loading_resizer);
-      }
-      
-      loading_message(message, timeout);
-      is_loading = true;
+      return Sysmo.arrangeArgs(arguments, 
+        String, [Number, false, default_timeout], 
+        function(message, timeout) {
+          
+          if (!is_loading) {
+            $.blockUI();
+            loading_resizer();
+            $(window).resize(loading_resizer);
+          }
+          
+          loading_message(message, timeout);
+          is_loading = true;
+        });
     },
     loaded = function () {
       return Sysmo.arrangeArgs(arguments, 
-        String, Number, Function, 
+        String, [Number, false, default_timeout], Function, 
         function(message, timeout, callback) {
-          loading_message(message, null, function() {
+          loading_message(message, default_timeout, function() {
             loaded_timer = loaded_finalizer(timeout, callback);
           });
         });
