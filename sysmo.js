@@ -125,7 +125,7 @@
      * //all args are optional... will display overlay with default settings
      * var displayOverlay = function() {
      *   return Sysmo.optionalArgs(arguments, 
-     *            String, [Number, false, 0], [Function, false, function(){}], 
+     *            String, [Number, false, 0], Function, 
      *            function(message, timeout, callback) {
      *              var overlay = new Overlay(message);
      *              overlay.timeout = timeout;
@@ -145,14 +145,14 @@
      * 
      * arguments = the original arguments to the function defined in your javascript API.
      * config = describe the argument type
-     *  - Class or function - specify the type (e.g. String, Number, Function, Array) 
-     *                        or a function that will be called to validate the parameter
-     *  - Array - specify an array with the class/function, a boolean whether the value is nullable, and a default value
-     *    - e.g. [String, true, '']
+     *  - Class - specify the type (e.g. String, Number, Function, Array) 
+     *  - [Class/function, boolean, default] - pass an array where the first value is a class or a function...
+     *                                         The "boolean" indicates if the first value should be treated as a function.
+     *                                         The "default" is an optional default value to use instead of undefined.
      * 
      */
     arrangeArgs: function (/* arguments, config1 [, config2] , callback */) {
-      //config format: [String, true, ''], [Number, true, 0], [Function, true, function(){}]
+      //config format: [String, false, ''], [Number, false, 0], [Function, false, function(){}]
       //config doesn't need a default value.
       //config can also be classes instead of an array if not required and no default value.
       
@@ -177,16 +177,18 @@
       //loop through configs to create more easily readable objects
       for (var i = 0; i < configs.length; i++) {
         var config = configs[i],
-            type = config[0] || config,
-            is_function = (type !== Function && type.constructor === Function),
-            type_checker = (is_function) ? type : function(value) {
-              return value.constructor === type;
-            };
-        
+            fn = config[0] || config,
+            //if config[1] is true, use fn as validator, 
+            //otherwise create a validator from a closure to preserve fn for later use
+            validator = (config[1]) ? fn : (function(fn) {
+              return function(value) {
+                return value.constructor === fn;
+              }
+            })(fn);
+
         //try to access array indexes, otherwise the config is not an array
         configs[i] = {
-          valid: type_checker,
-          nullable: !! config[1], // || false,
+          validate: validator,
           defaultValue: config[2] //defaults to undefined
         };
       }
@@ -200,7 +202,7 @@
         if (values.length) {
           
           //see if arg value matches config
-          if (config.valid(values[0]) || (config.nullable && values[0] == null)) {
+          if (config.validate(values[0])) {
             args.push(values.shift());
             continue;
           }
