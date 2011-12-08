@@ -176,33 +176,22 @@
       
       //loop through configs to create more easily readable objects
       for (var i = 0; i < configs.length; i++) {
-        var config = configs[i],
-            fn = config[0] || config,
-            //if config[1] is true, use fn as validator, 
-            //otherwise create a validator from a closure to preserve fn for later use
-            validator = (config[1]) ? fn : (function(fn) {
-              return function(value) {
-                return value.constructor === fn;
-              }
-            })(fn);
-
-        //try to access array indexes, otherwise the config is not an array
-        configs[i] = {
-          validate: validator,
-          defaultValue: config[2] //defaults to undefined
-        };
-      }
-      
-      // [String, true, ''], [Number, true, 0], [Function, true]
-      for (var i = 0; i < configs.length; i++) {
         
         var config = configs[i];
-        
+
         //make sure there's a value
         if (values.length) {
           
+          //type or validator function
+          var fn = config[0] || config,
+              //if config[1] is true, use fn as validator, 
+              //otherwise create a validator from a closure to preserve fn for later use
+              validate = (config[1]) ? fn : function(value) {
+                return value.constructor === fn;
+              };
+          
           //see if arg value matches config
-          if (config.validate(values[0])) {
+          if (validate(values[0])) {
             args.push(values.shift());
             continue;
           }
@@ -210,7 +199,7 @@
         
         //add a default value if there is no value in the original args
         //or if the type didn't match
-        args.push(config.defaultValue);
+        args.push(config[2]);
       }
       
       return done();
