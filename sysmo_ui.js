@@ -58,8 +58,6 @@
       return Sysmo.arrangeArgs(arguments, 
         String, Number, Function, 
         function(message, timeout, callback) {
-          console.log("message", message, "timeout", timeout, "callback", callback);
-          
           loading_message(message, null, function() {
             loaded_timer = loaded_finalizer(timeout, callback);
           });
