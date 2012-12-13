@@ -1,13 +1,13 @@
 { "name" : "sysmo"
 , "description" : "JavaScript utilities for Node or the web"
-, "version" : "0.0.13"
+, "version" : "0.0.14"
 , "author" : "Joel Van Horn <joel@joelvanhorn.com>"
 , "repository" :
   { "type" : "git"
   , "url" : "git://github.com/joelvh/Sysmo.js.git"
   }
 , "bugs" : { "url" : "https://github.com/joelvh/Sysmo.js/issues" }
-, "os" : [ "linux", "darwin", "freebsd" ]
+, "os" : [ "linux", "darwin", "freebsd", "win32" ]
 , "directories" : { "lib" : "./lib/" }
 , "main" : "./lib/sysmo"
 , "engines" : { "node" : ">=0.1.97" }
