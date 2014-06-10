@@ -7,7 +7,7 @@
   , "url" : "git://github.com/joelvh/Sysmo.js.git"
   }
 , "bugs" : { "url" : "https://github.com/joelvh/Sysmo.js/issues" }
-, "os" : [ "linux", "darwin", "freebsd", "win32" ]
+, "os" : [ "linux", "darwin", "freebsd", "win32", "sunos" ]
 , "directories" : { "lib" : "./lib/" }
 , "main" : "./lib/sysmo"
 , "engines" : { "node" : ">=0.1.97" }
